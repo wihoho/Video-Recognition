@@ -1,0 +1,8 @@
+---Questions
+1. SVM problem of RBF kernel. Why distance is used in image recognition, the accuracy is so low?
+2. How to build vocabulary for video data effectively? I mean the case when the data is too large
+
+---Build vocabulary
+
+167837 * 128 (sample rate = 100)
+program falls when sample rate is set to 10 (Memory reaches 4GB)

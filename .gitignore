@@ -8,3 +8,7 @@
 .idea/.name
 
 *.pkl
+
+*.xml
+
+*.iml
