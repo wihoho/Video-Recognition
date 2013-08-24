@@ -32,6 +32,6 @@ kmeans.fit(temp)
 vocabulary = kmeans.cluster_centers_
 
 # Save vocabulary
-file = open("data\voc.pkl", "w")
+file = open("Data/voc.pkl", "w")
 pickle.dump(vocabulary, file)
 

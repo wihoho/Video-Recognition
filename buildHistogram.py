@@ -12,8 +12,8 @@ for label in os.listdir("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_feat
     if label == '.DS_Store':
         continue
 
-    if label in ["birthday", "parade", "picnic"]:
-        continue
+    # if label in ["birthday", "parade", "picnic"]:
+    #     continue
 
     path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/" + label
 

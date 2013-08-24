@@ -91,7 +91,6 @@ def C_EMD(feature1, feature2):
     return float(file[0])
 
 
-
 def calculaeDistanceMatrix(PATH):
 
     labels = []

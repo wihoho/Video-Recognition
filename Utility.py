@@ -46,6 +46,8 @@ def buildHistogramForVideo(pathToVideo, vocabulary):
         completePath = pathToVideo +"/"+ frame
         lines = open(completePath, "r").readlines()
 
+        print completePath
+
         frameFeatures = np.zeros(128).reshape(1, 128)
         for line in lines[1:]:
             data = line.split(" ")
@@ -74,19 +76,32 @@ def writeDataToFile(filePath, data):
     pickle.dump(data, file)
     file.close()
 
-def loadDataFromFile(filePath):
-    file = open(filePath, 'r')
-    data = pickle.load(file)
-    return data
+def normalize(X):
+    row = X.shape[0]
+    column = X.shape[1]
+
+    maxValues = np.amax(X, axis=1)
+    minValues = np.amin(X, axis=1)
+
+    for i in range(row):
+        for j in range(column):
+            X[i][j] = (X[i][j] - minValues[i]) * 2.0 / (maxValues[i] - minValues[i])
+
+def storeObject(fileName, obj):
+    file = open(fileName, "w")
+    pickle.dump(obj, file)
+    file.close()
+
+def loadObject(fileName):
+    file = open(fileName, "r")
+    obj = pickle.load(file)
+    return obj
 
 
 if __name__ == "__main__":
-    import pickle
-    file = open("Data/birthday_103_0337.pkl", "r")
-
-    data = pickle.load(file)
-    print "Yes"
-
+    path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318"
+    for item in os.listdir(path):
+        print path +"/"+item
 
 
 
