@@ -138,12 +138,12 @@ class Video:
             indice += 1
 
         # stack all SIFT features to perform PCA
-        stackOfSIFTfeatures = SIFTfeatures[0]
-        for eachFeature in SIFTfeatures[1:]:
-            stackOfSIFTfeatures = np.vstack((stackOfSIFTfeatures, eachFeature[::5]))
-
-        V,S, mean = pca.pca(stackOfSIFTfeatures)
-        self.V = V
+        # stackOfSIFTfeatures = SIFTfeatures[0]
+        # for eachFeature in SIFTfeatures[1:]:
+        #     stackOfSIFTfeatures = np.vstack((stackOfSIFTfeatures, eachFeature[::5]))
+        #
+        # V,S, mean = pca.pca(stackOfSIFTfeatures)
+        self.V = util.loadObject("PCA_V.pkl")
 
         # Perform near duplicate within each cluster
         KEYFRAMES = []
@@ -289,8 +289,6 @@ if __name__ == "__main__":
     for label in labels:
         labelPath = path + label
 
-
-
         for video in os.listdir(labelPath):
             if video == ".DS_Store":
                 continue
@@ -301,11 +299,11 @@ if __name__ == "__main__":
             print videoPath
 
             v = Video(videoPath)
-            histogramName = video +"_"+ "Histogram.pkl"
-            imageNames = video +"_"+ "ImageNames.pkl"
+            histogramName = "Histogram_" +video + ".pkl"
+            imageNames = "ImageNames_" +video+ ".pkl"
 
-            util.storeObject("CompressedData/"+histogramName, v.compressedHistogram)
-            util.storeObject("CompressedData/"+imageNames, v.compressedImageName)
+            util.storeObject("CompressedData/" +label+ "/"  +histogramName, v.compressedHistogram)
+            util.storeObject("CompressedData/" +label+ "/" +imageNames, v.compressedImageName)
 
 
 
