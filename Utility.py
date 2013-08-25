@@ -11,6 +11,8 @@ def normalizeSIFT(descriptor):
 
     if norm > 1.0:
         result = np.true_divide(descriptor, norm)
+    else:
+        result = None
 
     return result
 

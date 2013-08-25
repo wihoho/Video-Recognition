@@ -100,13 +100,20 @@ class Video:
         # Histogramize each image
         imageHistograms = []
         vocabulary = util.loadObject("Data/voc.pkl")
-        vocSize = len(vocabulary)
 
         for imageFeature in SIFTfeatures:
             # normalize SIFT feature when building the histogram
-            imageFeature = util.normalizeSIFT(imageFeature)
 
-            histogram = self.buildHistogram(imageFeature, vocabulary)
+            normalizeSIFT = np.zeros(128).reshape(1, 128)
+            row = imageFeature.shape[0]
+            for i in range(row):
+                singleSIFT = imageFeature[i]
+                singleSIFT = util.normalizeSIFT(singleSIFT)
+
+                normalizeSIFT = np.vstack((normalizeSIFT, singleSIFT))
+
+            normalizeSIFT = normalizeSIFT[1:]
+            histogram = self.buildHistogram(normalizeSIFT, vocabulary)
             imageHistograms.append(histogram)
 
         imageHistograms = np.array(imageHistograms)
@@ -301,8 +308,8 @@ if __name__ == "__main__":
             if video == ".DS_Store":
                 continue
 
-            if video in ["100_3503", "100_3510", "100_3513", "100_3521", "100_3522", "100_3529", "103_0337"]:
-                continue
+            # if video in ["100_3503", "100_3510", "100_3513", "100_3521", "100_3522", "100_3529", "103_0337"]:
+            #     continue
 
             print time.ctime()
 
