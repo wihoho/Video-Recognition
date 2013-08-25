@@ -117,7 +117,7 @@ class Video:
 
         # Cluster frames
         self.numOfFrames = len(imageNames)
-        self.numOfCentriods = int(self.numOfFrames / 6)
+        self.numOfCentriods = int(self.numOfFrames / 10)
 
         kmeans = KMeans(init="k-means++", n_clusters=self.numOfCentriods, n_init=10)
         kmeans.fit(self.imageHistograms)
@@ -141,7 +141,7 @@ class Video:
         # stack all SIFT features to perform PCA
         stackOfSIFTfeatures = SIFTfeatures[0]
         for eachFeature in SIFTfeatures[1:]:
-            stackOfSIFTfeatures = np.vstack((stackOfSIFTfeatures, eachFeature[::5]))
+            stackOfSIFTfeatures = np.vstack((stackOfSIFTfeatures, eachFeature))
 
         # V,S, mean = pca.pca(stackOfSIFTfeatures)
         pca = PCA(n_components=36)
@@ -159,7 +159,7 @@ class Video:
             cluster = dict[key]
             clusterFeatures = []
             for i in cluster:
-                clusterFeatures.append(self.SIFTfeatures[i])
+                clusterFeatures.append(self.SIFTfeatures[i][::3])
 
             potentialKeyFrames = self.identifyKeyFrame(clusterFeatures, cluster)
             KEYFRAMES += potentialKeyFrames
@@ -280,39 +280,41 @@ class Video:
 
 
 if __name__ == "__main__":
-    v = Video("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318")
-    pcaV = v.V
-    util.storeObject("PCA_V.pkl", pcaV)
+    # v = Video("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318")
+    # pcaV = v.V
+    # util.storeObject("PCA_V.pkl", pcaV)
+    #
+    # videoName = v.videoPath.split("/")[-1]
+    # histogramName = videoName +"_"+ "Histogram.pkl"
+    # imagesName = videoName +"_"+ "ImageNames.pkl"
+    #
+    # util.storeObject("CompressedData/"+histogramName, v.compressedHistogram)
+    # util.storeObject("CompressedData/"+imagesName, v.compressedImageName)
 
-    videoName = v.videoPath.split("/")[-1]
-    histogramName = videoName +"_"+ "Histogram.pkl"
-    imagesName = videoName +"_"+ "ImageNames.pkl"
+    path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/"
+    labels = ["birthday", "parade", "picnic", "show", "sports", "wedding"]
 
-    util.storeObject("CompressedData/"+histogramName, v.compressedHistogram)
-    util.storeObject("CompressedData/"+imagesName, v.compressedImageName)
+    for label in labels:
+        labelPath = path + label
 
+        for video in os.listdir(labelPath):
+            if video == ".DS_Store":
+                continue
 
-    # path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/"
-    # labels = ["birthday", "parade", "picnic", "show", "sports", "wedding"]
-    #
-    # for label in labels:
-    #     labelPath = path + label
-    #
-    #     for video in os.listdir(labelPath):
-    #         if video == ".DS_Store":
-    #             continue
-    #
-    #         print time.ctime()
-    #
-    #         videoPath = labelPath +"/"+ video
-    #         print videoPath
-    #
-    #         v = Video(videoPath)
-    #         histogramName = "Histogram_" +video + ".pkl"
-    #         imageNames = "ImageNames_" +video+ ".pkl"
-    #
-    #         util.storeObject("CompressedData/" +label+ "/"  +histogramName, v.compressedHistogram)
-    #         util.storeObject("CompressedData/" +label+ "/" +imageNames, v.compressedImageName)
+            if video in ["100_3503", "100_3510", "100_3513", "100_3521", "100_3522", "100_3529", "103_0337"]:
+                continue
+
+            print time.ctime()
+
+            videoPath = labelPath +"/"+ video
+            print videoPath
+
+            v = Video(videoPath)
+            histogramName = "Histogram_" +video + ".pkl"
+            imageNames = "ImageNames_" +video+ ".pkl"
+
+            util.storeObject("CompressedData/" +label+ "/"  +histogramName, v.compressedHistogram)
+            util.storeObject("CompressedData/" +label+ "/" +imageNames, v.compressedImageName)
 
 
 
