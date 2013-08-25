@@ -8,6 +8,7 @@ from sklearn.cluster import KMeans
 import pca
 from random import randint
 import time
+from sklearn.decomposition import PCA
 
 class Graph:
 
@@ -138,12 +139,17 @@ class Video:
             indice += 1
 
         # stack all SIFT features to perform PCA
-        # stackOfSIFTfeatures = SIFTfeatures[0]
-        # for eachFeature in SIFTfeatures[1:]:
-        #     stackOfSIFTfeatures = np.vstack((stackOfSIFTfeatures, eachFeature[::5]))
-        #
+        stackOfSIFTfeatures = SIFTfeatures[0]
+        for eachFeature in SIFTfeatures[1:]:
+            stackOfSIFTfeatures = np.vstack((stackOfSIFTfeatures, eachFeature[::5]))
+
         # V,S, mean = pca.pca(stackOfSIFTfeatures)
-        self.V = util.loadObject("PCA_V.pkl")
+        pca = PCA(n_components=36)
+        pca.fit(stackOfSIFTfeatures)
+        self.pca = pca
+
+        # self.V = util.loadObject("PCA_V.pkl")
+
 
         # Perform near duplicate within each cluster
         KEYFRAMES = []
@@ -201,8 +207,11 @@ class Video:
                 two = SIFTFeatures[j]
 
                 # check whether one and two are near duplicate
-                pcaFeatures1 = pca.project(one, self.V, 36)
-                pcaFeatures2 = pca.project(two, self.V, 36)
+                # pcaFeatures1 = pca.project(one, self.V, 36)
+                # pcaFeatures2 = pca.project(two, self.V, 36)
+
+                pcaFeatures1 = self.pca.transform(one)
+                pcaFeatures2 = self.pca.transform(two)
 
                 # normalize features
                 util.normalize(pcaFeatures1)
@@ -271,39 +280,39 @@ class Video:
 
 
 if __name__ == "__main__":
-    # v = Video("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318")
-    # pcaV = v.V
-    # util.storeObject("PCA_V.pkl", pcaV)
+    v = Video("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318")
+    pcaV = v.V
+    util.storeObject("PCA_V.pkl", pcaV)
+
+    videoName = v.videoPath.split("/")[-1]
+    histogramName = videoName +"_"+ "Histogram.pkl"
+    imagesName = videoName +"_"+ "ImageNames.pkl"
+
+    util.storeObject("CompressedData/"+histogramName, v.compressedHistogram)
+    util.storeObject("CompressedData/"+imagesName, v.compressedImageName)
+
+
+    # path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/"
+    # labels = ["birthday", "parade", "picnic", "show", "sports", "wedding"]
     #
-    # videoName = v.videoPath.split("/")[-1]
-    # histogramName = videoName +"_"+ "Histogram.pkl"
-    # imagesName = videoName +"_"+ "ImageNames.pkl"
+    # for label in labels:
+    #     labelPath = path + label
     #
-    # util.storeObject("CompressedData/"+histogramName, v.compressedHistogram)
-    # util.storeObject("CompressedData/"+imagesName, v.compressedImageName)
-
-
-    path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/"
-    labels = ["birthday", "parade", "picnic", "show", "sports", "wedding"]
-
-    for label in labels:
-        labelPath = path + label
-
-        for video in os.listdir(labelPath):
-            if video == ".DS_Store":
-                continue
-
-            print time.ctime()
-
-            videoPath = labelPath +"/"+ video
-            print videoPath
-
-            v = Video(videoPath)
-            histogramName = "Histogram_" +video + ".pkl"
-            imageNames = "ImageNames_" +video+ ".pkl"
-
-            util.storeObject("CompressedData/" +label+ "/"  +histogramName, v.compressedHistogram)
-            util.storeObject("CompressedData/" +label+ "/" +imageNames, v.compressedImageName)
+    #     for video in os.listdir(labelPath):
+    #         if video == ".DS_Store":
+    #             continue
+    #
+    #         print time.ctime()
+    #
+    #         videoPath = labelPath +"/"+ video
+    #         print videoPath
+    #
+    #         v = Video(videoPath)
+    #         histogramName = "Histogram_" +video + ".pkl"
+    #         imageNames = "ImageNames_" +video+ ".pkl"
+    #
+    #         util.storeObject("CompressedData/" +label+ "/"  +histogramName, v.compressedHistogram)
+    #         util.storeObject("CompressedData/" +label+ "/" +imageNames, v.compressedImageName)
 
 
 
