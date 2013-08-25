@@ -166,7 +166,7 @@ class Video:
             cluster = dict[key]
             clusterFeatures = []
             for i in cluster:
-                clusterFeatures.append(self.SIFTfeatures[i][::3])
+                clusterFeatures.append(self.SIFTfeatures[i])
 
             potentialKeyFrames = self.identifyKeyFrame(clusterFeatures, cluster)
             KEYFRAMES += potentialKeyFrames
@@ -244,7 +244,10 @@ class Video:
                 oneSize = one.shape[0]
                 twoSize = two.shape[0]
 
-                ratio = matchSize / float(min(oneSize, twoSize))
+                if oneSize == 0 or twoSize == 0:
+                    ratio = 0
+                else:
+                    ratio = matchSize / float(min(oneSize, twoSize))
 
                 if ratio > threshold:
                     graph.connect(i,j)
@@ -308,8 +311,8 @@ if __name__ == "__main__":
             if video == ".DS_Store":
                 continue
 
-            # if video in ["100_3503", "100_3510", "100_3513", "100_3521", "100_3522", "100_3529", "103_0337"]:
-            #     continue
+            if video in ["100_3503", "100_3510", "100_3513", "100_3521", "100_3522", "100_3529", "103_0337"]:
+                continue
 
             print time.ctime()
 
