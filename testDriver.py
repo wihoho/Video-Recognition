@@ -188,10 +188,11 @@ def classification(trainDistance, testDistance, trainLabels, testLabels, kernelN
     correct = sum(1.0 * (SVMResults == testLabels))
     accuracy = correct / len(testLabels)
     print kernelName+ ": " +str(accuracy)+ " (" +str(int(correct))+ "/" +str(len(testLabels))+ ")"
+    print clf.score(testGramMatrix, testLabels)
 
 
 if __name__ == "__main__":
-    KFoldEvaluation(3)
+    KFoldEvaluation(5)
 
     # print "--------------------rbf-------"
     # classifiyUsingDifferentKernel("rbf")
@@ -208,6 +209,7 @@ if __name__ == "__main__":
     # print "--------------------isd-------"
     # classifiyUsingDifferentKernel("isd")
     # print " "
+
 
 
 

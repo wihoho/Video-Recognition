@@ -10,3 +10,4 @@ program falls when sample rate is set to 10 (Memory reaches 4GB)
 ---Video near duplication problem
 /Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/birthday/103_0337/
 it seems that all frames are different, try it using another way which takes care of all features
+
