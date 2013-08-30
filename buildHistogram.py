@@ -4,7 +4,6 @@ import os
 import pickle
 import Utility as util
 
-
 file = open("Data/voc.pkl", "r")
 vocabulary = pickle.load(file)
 

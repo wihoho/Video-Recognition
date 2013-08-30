@@ -95,22 +95,29 @@ def calculaeDistanceMatrix(PATH):
 
     labels = []
     videoData = []
+    identifier = []
 
     # Read in all video data
-    for item in os.listdir(PATH):
-        if item in [".DS_Store", "voc.pkl", "distanceMatrix.pkl", "labels.pkl"]:
+    for domain in os.listdir(PATH):
+        if domain == ".DS_Store":
             continue
 
-        classPath = PATH +"/"+ item
+        P = PATH +"/"+ domain
+        for item in os.listdir(P):
+            if item in [".DS_Store", "voc.pkl", "distanceMatrix.pkl", "labels.pkl"]:
+                continue
 
-        for video in os.listdir(classPath):
-            completePath = classPath + "/" +video
-            print completePath
+            classPath = P +"/"+ item
 
-            videoHistogram = util.loadDataFromFile(completePath)
-            videoData.append(videoHistogram)
+            for video in os.listdir(classPath):
+                completePath = classPath + "/" +video
+                print completePath
 
-            labels.append(item)
+                videoHistogram = util.loadObject(completePath)
+                videoData.append(videoHistogram)
+
+                labels.append(item)
+                identifier.append(domain)
 
     del videoHistogram
     videoHistogram = None
@@ -153,13 +160,13 @@ def calculaeDistanceMatrix(PATH):
 
             print "["+str(i) +","+ str(j)+"]: " + str(distanceMatrix[i][j])
 
-    return distanceMatrix, labels
+    return distanceMatrix, labels, identifier
 
 
     # Calculate the distance matrix
 
 if __name__ == "__main__":
-    distanceMatrix, labels = calculaeDistanceMatrix("Data")
-    util.writeDataToFile("Data/distanceMatrix.pkl", distanceMatrix)
-    util.writeDataToFile("Data/labels.pkl", labels)
-
+    distanceMatrix, labels, identifier = calculaeDistanceMatrix("VideoHistograms")
+    util.writeDataToFile("Data/all_distanceMatrix.pkl", distanceMatrix)
+    util.writeDataToFile("Data/all_labels.pkl", labels)
+    util.writeDataToFile("Data/all_identifier.pkl", identifier)

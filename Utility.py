@@ -90,15 +90,14 @@ def normalize(X):
             X[i][j] = (X[i][j] - minValues[i]) * 2.0 / (maxValues[i] - minValues[i])
 
 def storeObject(fileName, obj):
-    file = open(fileName, "w")
+    file = open(fileName, "wb")
     pickle.dump(obj, file)
     file.close()
 
 def loadObject(fileName):
-    file = open(fileName, "r")
+    file = open(fileName, "rb")
     obj = pickle.load(file)
     return obj
-
 
 if __name__ == "__main__":
     path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318"
