@@ -57,12 +57,16 @@ def EMD(feature1, feature2, w1, w2):
 
     flow = value(problem.objective)
 
-
     return flow / tempMin
 
 
 def C_EMD(feature1, feature2):
     os.environ['PATH'] += os.pathsep + '/usr/local/bin'
+
+    if feature1.shape[0] > 349:
+        feature1 = feature1[:350]
+    if feature2.shape[0] > 349:
+        feature2 = feature2[:350]
 
     H = feature1.shape[0]
     I = feature2.shape[0]
@@ -87,6 +91,7 @@ def C_EMD(feature1, feature2):
 
     # Read in EMD distance
     file = open("result", "r").readlines()
+    os.remove("groundDistance")
 
     return float(file[0])
 

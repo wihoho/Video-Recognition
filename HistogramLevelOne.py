@@ -4,6 +4,7 @@ import Utility as util
 import numpy as np
 from scipy.cluster.vq import *
 import os
+import time
 
 def buildHistogramLevelOne(videoPath):
 
@@ -20,6 +21,8 @@ def buildHistogramLevelOne(videoPath):
     for frame in frames[:boundary]:
         framePath = videoPath +"/"+ frame
         frameHistograms = imageHistogramLevelOne(framePath, voc)
+        if not frameHistograms:
+            continue
 
         assert len(frameHistograms) == 4
 
@@ -29,12 +32,12 @@ def buildHistogramLevelOne(videoPath):
     for i in range(len(front)):
         front[i] = front[i][1:]
 
-    print "Yes"
-
     # process back
     for frame in frames[boundary: ]:
         framePath = videoPath +"/"+ frame
         frameHistograms = imageHistogramLevelOne(framePath, voc)
+        if not frameHistograms:
+            continue
 
         for i in range(4):
             back[i] = np.vstack((back[i], frameHistograms[i]))
@@ -44,7 +47,6 @@ def buildHistogramLevelOne(videoPath):
 
     VideoEightHistograms = front + back
     return VideoEightHistograms
-
 
 def imageHistogramLevelOne(framePath, voc):
 
@@ -71,6 +73,9 @@ def imageHistogramLevelOne(framePath, voc):
         featureLocations = np.vstack((featureLocations, locations))
 
     frameFeatures = frameFeatures[1:]
+    if len(frameFeatures) == 0:
+        return None
+
     featureLocations = featureLocations[1:]
 
     maxValues = np.amax(featureLocations, axis=0)
@@ -143,4 +148,28 @@ def imageHistogramLevelOne(framePath, voc):
     return allFourHistogram
 
 if __name__ == "__main__":
-    buildHistogramLevelOne("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/wedding/VTS_05_01_1318")
+
+    for label in os.listdir("/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak"):
+        path = "/Users/GongLi/Dropbox/FYP/Duan Lixin Data Set/sift_features/Kodak/" + label
+        print path
+
+        if label in ["birthday", "parade","picnic", ".DS_Store"]:
+            continue
+
+
+        for video in os.listdir(path):
+            if video == ".DS_Store":
+                continue
+
+            if label == "show" and video in ["100_0204", "100_0205", "100_0207", "100_0208"]:
+                continue
+
+            fileName = "KodakLevelOneHistograms/"+label+"_"+video+".pkl"
+
+            videoPath = path +"/"+video
+            print videoPath
+
+            eightHistograms = buildHistogramLevelOne(videoPath)
+            util.storeObject(fileName, eightHistograms)
+
+        print time.ctime()
