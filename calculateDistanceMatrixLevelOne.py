@@ -4,9 +4,9 @@ import calculateDistanceMatrix as calDis
 import numpy as np
 import os
 import Utility as util
+import subprocess as sub
 
 def calculateDistanceAtLevelOne(videoOne, videoTwo):
-
     assert len(videoOne) == 8
     assert len(videoTwo) == 8
 
@@ -21,7 +21,7 @@ def calculateDistanceAtLevelOne(videoOne, videoTwo):
     return alignedDistances(distances)
 
 def alignedDistances(distances):
-    os.environ['PATH'] += os.pathsep + '/usr/local/bin'
+    # os.environ['PATH'] += os.pathsep + '/usr/local/bin'
     shape = distances.shape
     assert shape[0] == 8 and shape[1] == 8
 
@@ -36,7 +36,8 @@ def alignedDistances(distances):
     groundDistanceFile.close()
 
     # Run C programme to calculate EMD
-    os.system("/Users/GongLi/PycharmProjects/VideoRecognition/EarthMoverDistance")
+    sub.call(["/Users/GongLi/PycharmProjects/VideoRecognition/EarthMoverDistance"])
+
     # Read in EMD distance
     file = open("result", "r").readlines()
     os.remove("groundDistance")
@@ -70,8 +71,8 @@ def calculateDistanceMatrixAtLevelOne(PATH):
     numberOfVideos = len(labels)
     distanceMatrix = np.zeros((numberOfVideos, numberOfVideos))
 
-    for i in range(1, numberOfVideos):
-        for j in range(75, numberOfVideos):
+    for i in range(numberOfVideos):
+        for j in range(i, numberOfVideos, 1):
 
             if i == j:
                 distanceMatrix[i][j] = 0

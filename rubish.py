@@ -2,6 +2,6 @@ __author__ = 'GongLi'
 
 import Utility as util
 
-data = util.loadObject("VideoHistograms/Youtube/birthday/birthday_YT_birthday_001.pkl")
+data = util.loadObject("/Users/GongLi/PycharmProjects/VideoRecognition/Data/Kodak_distanceMatrix.pkl")
 
-print "Yes"
+print str(data[6][9])

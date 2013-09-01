@@ -5,54 +5,11 @@ from sklearn.svm import SVC
 import math
 import numpy as np
 
-def classifiyUsingDifferentKernel(kernelName):
-
-    distances = util.loadObject("Data/distanceMatrix.pkl")
-    labels = util.loadObject("Data/labels.pkl")
-
-    # Training data
-    trainDistance = distances[0::2, 0::2]
-    trainLabels = labels[0::2]
-
-    # Testing data
-    testDistance = distances[1::2, 0::2]
-    testLabels = labels[1::2]
-
-    # more process on distance matrix
-    trainDistance = trainDistance ** 2
-    testDistance = testDistance ** 2
-
-    meanTrainValue = np.mean(trainDistance)
-    meanTestValue = np.mean(testDistance)
-
-    # Different gram matrix with different kernels
-    if kernelName == "rbf":
-        trainGramMatrix = math.e ** (0 - trainDistance / meanTrainValue)
-        testGramMatrix = math.e ** (0 - testDistance / meanTestValue)
-
-    elif kernelName == "lap":
-        trainGramMatrix = math.e ** (0 - (trainDistance / meanTrainValue) ** (0.5))
-        testGramMatrix = math.e ** (0 - (testDistance / meanTestValue) ** (0.5))
-    elif kernelName == "id":
-        trainGramMatrix = 1.0 / ((trainDistance / meanTrainValue) ** (0.5) + 1.0)
-        testGramMatrix = 1.0 / ((testDistance / meanTestValue) ** (0.5) + 1.0)
-    elif kernelName == "isd":
-        trainGramMatrix = 1.0 / (trainDistance / meanTrainValue + 1)
-        testGramMatrix = 1.0 / (testDistance / meanTestValue + 1)
-
-    # SVM
-    clf = SVC(kernel="precomputed")
-    clf.fit(trainGramMatrix, trainLabels)
-    SVMResults = clf.predict(testGramMatrix)
-    correct = sum(1.0 * (SVMResults == testLabels))
-    accuracy = correct / len(testLabels)
-    print "SVM: " +str(accuracy)+ " (" +str(int(correct))+ "/" +str(len(testLabels))+ ")"
-
 
 def KFoldEvaluation(K):
 
-    distances = util.loadObject("Data/distanceMatrix.pkl")
-    labels = util.loadObject("Data/labels.pkl")
+    distances = util.loadObject("Data/Kodak_distanceMatrix_version2.pkl")
+    labels = util.loadObject("Data/Kodak_labels_version2.pkl")
     percentage = 1.0 / K
 
     # birthday: 0 - 15
@@ -187,8 +144,8 @@ def classification(trainDistance, testDistance, trainLabels, testLabels, kernelN
     SVMResults = clf.predict(testGramMatrix)
     correct = sum(1.0 * (SVMResults == testLabels))
     accuracy = correct / len(testLabels)
-    print kernelName+ ": " +str(accuracy)+ " (" +str(int(correct))+ "/" +str(len(testLabels))+ ")"
-    print clf.score(testGramMatrix, testLabels)
+    # print kernelName+ ": " +str(accuracy)+ " (" +str(int(correct))+ "/" +str(len(testLabels))+ ")"
+    print str(accuracy)
 
 
 if __name__ == "__main__":

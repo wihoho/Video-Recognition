@@ -4,6 +4,7 @@ from pulp import *
 import numpy as np
 import os
 import Utility as util
+import subprocess as sub
 
 def EMD(feature1, feature2, w1, w2):
     os.environ['PATH'] += os.pathsep + '/usr/local/bin'
@@ -59,9 +60,8 @@ def EMD(feature1, feature2, w1, w2):
 
     return flow / tempMin
 
-
 def C_EMD(feature1, feature2):
-    os.environ['PATH'] += os.pathsep + '/usr/local/bin'
+    # os.environ['PATH'] += os.pathsep + '/usr/local/bin'
 
     if feature1.shape[0] > 349:
         feature1 = feature1[:350]
@@ -87,42 +87,35 @@ def C_EMD(feature1, feature2):
     groundDistanceFile.close()
 
     # Run C programme to calculate EMD
-    os.system("/Users/GongLi/PycharmProjects/VideoRecognition/EarthMoverDistance")
+    # os.system("/Users/GongLi/PycharmProjects/VideoRecognition/EarthMoverDistance")
+    sub.call(["/Users/GongLi/PycharmProjects/VideoRecognition/EarthMoverDistance"])
 
     # Read in EMD distance
     file = open("result", "r").readlines()
-    os.remove("groundDistance")
+    # os.remove("groundDistance")
 
     return float(file[0])
 
-
-def calculaeDistanceMatrix(PATH):
+def calculaeDistanceMatrix(P):
 
     labels = []
     videoData = []
-    identifier = []
 
-    # Read in all video data
-    for domain in os.listdir(PATH):
-        if domain == ".DS_Store":
+
+    for item in os.listdir(P):
+        if item in [".DS_Store", "voc.pkl", "distanceMatrix.pkl", "labels.pkl"]:
             continue
 
-        P = PATH +"/"+ domain
-        for item in os.listdir(P):
-            if item in [".DS_Store", "voc.pkl", "distanceMatrix.pkl", "labels.pkl"]:
-                continue
+        classPath = P +"/"+ item
 
-            classPath = P +"/"+ item
+        for video in os.listdir(classPath):
+            completePath = classPath + "/" +video
+            print completePath
 
-            for video in os.listdir(classPath):
-                completePath = classPath + "/" +video
-                print completePath
+            videoHistogram = util.loadObject(completePath)
+            videoData.append(videoHistogram)
 
-                videoHistogram = util.loadObject(completePath)
-                videoData.append(videoHistogram)
-
-                labels.append(item)
-                identifier.append(domain)
+            labels.append(item)
 
     del videoHistogram
     videoHistogram = None
@@ -131,7 +124,7 @@ def calculaeDistanceMatrix(PATH):
     numberOfVideos = len(labels)
     distanceMatrix = np.zeros((numberOfVideos, numberOfVideos))
 
-    for i in range(numberOfVideos):
+    for i in range(0, numberOfVideos):
         for j in range(i, numberOfVideos, 1):
             if i == j:
                 distanceMatrix[i][j] = 0
@@ -140,38 +133,22 @@ def calculaeDistanceMatrix(PATH):
             image1 = videoData[i]
             image2 = videoData[j]
 
-            if image1.shape[0] > 99:
-                sampleRate = int(image1.shape[0] / 100) + 1
-                image1 = image1[::sampleRate]
+            if image1.shape[0] > 349:
+                # sampleRate = int(image1.shape[0] / 100) + 1
+                image1 = image1[:350]
 
-            if image2.shape[0] > 99:
-                sampleRate = int(image2.shape[0] / 100) + 1
-                image2 = image2[::sampleRate]
-
-            numFramesOne = image1.shape[0]
-            numFramesTwo = image2.shape[0]
-
-
-            # construct the weights list
-            weight = 1.0 / numFramesOne
-            w1 = [weight] * numFramesOne
-
-            weight = 1.0 / numFramesTwo
-            w2 = [weight] * numFramesTwo
+            if image2.shape[0] > 349:
+                # sampleRate = int(image2.shape[0] / 100) + 1
+                image2 = image2[:350]
 
             distanceMatrix[i][j] = C_EMD(image1, image2)
-            # distanceMatrix[i][j] = EMD(image1, image2, w1,w2)
             distanceMatrix[j][i] = distanceMatrix[i][j]
 
             print "["+str(i) +","+ str(j)+"]: " + str(distanceMatrix[i][j])
 
-    return distanceMatrix, labels, identifier
-
-
-    # Calculate the distance matrix
+    return distanceMatrix, labels
 
 if __name__ == "__main__":
-    distanceMatrix, labels, identifier = calculaeDistanceMatrix("VideoHistograms")
-    util.writeDataToFile("Data/all_distanceMatrix.pkl", distanceMatrix)
-    util.writeDataToFile("Data/all_labels.pkl", labels)
-    util.writeDataToFile("Data/all_identifier.pkl", identifier)
+    distanceMatrix, labels = calculaeDistanceMatrix("KodakHistograms")
+    util.writeDataToFile("Data/Kodak_distanceMatrix_version2.pkl", distanceMatrix)
+    util.writeDataToFile("Data/Kodak_labels_version2.pkl", labels)
