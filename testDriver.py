@@ -8,8 +8,11 @@ import numpy as np
 
 def KFoldEvaluation(K):
 
-    distances = util.loadObject("Data/Kodak_distanceMatrix_version2.pkl")
-    labels = util.loadObject("Data/Kodak_labels_version2.pkl")
+    # distances = util.loadObject("Data/Kodak_distanceMatrix_version2.pkl")
+    # labels = util.loadObject("Data/Kodak_labels_version2.pkl")
+
+    distances = util.loadObject("Data/KodakDistanceLevelOne.pkl")
+    labels = util.loadObject("Data/KodakLabelLevelOne.pkl")
     percentage = 1.0 / K
 
     # birthday: 0 - 15
@@ -122,6 +125,10 @@ def classification(trainDistance, testDistance, trainLabels, testLabels, kernelN
 
     meanTrainValue = np.mean(trainDistance)
     meanTestValue = np.mean(testDistance)
+
+    # ultimateMeaValue = (meanTestValue + meanTrainValue) / 2.0
+    # meanTrainValue = ultimateMeaValue
+    # meanTestValue = ultimateMeaValue
 
     # Different gram matrix with different kernels
     if kernelName == "rbf":
