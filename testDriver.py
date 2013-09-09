@@ -8,11 +8,11 @@ import numpy as np
 
 def KFoldEvaluation(K):
 
-    # distances = util.loadObject("Data/Kodak_distanceMatrix_version2.pkl")
-    # labels = util.loadObject("Data/Kodak_labels_version2.pkl")
+    distances = util.loadObject("Data/Kodak_distanceMatrix_version2.pkl")
+    labels = util.loadObject("Data/Kodak_labels_version2.pkl")
 
-    distances = util.loadObject("Data/KodakDistanceLevelOne.pkl")
-    labels = util.loadObject("Data/KodakLabelLevelOne.pkl")
+    # distances = util.loadObject("Data/KodakDistanceLevelOne.pkl")
+    # labels = util.loadObject("Data/KodakLabelLevelOne.pkl")
     percentage = 1.0 / K
 
     # birthday: 0 - 15
@@ -124,7 +124,9 @@ def classification(trainDistance, testDistance, trainLabels, testLabels, kernelN
     testDistance = testDistance ** 2
 
     meanTrainValue = np.mean(trainDistance)
-    meanTestValue = np.mean(testDistance)
+    meanTestValue = meanTrainValue
+
+    # meanTestValue = np.mean(testDistance)
 
     # ultimateMeaValue = (meanTestValue + meanTrainValue) / 2.0
     # meanTrainValue = ultimateMeaValue
@@ -148,11 +150,16 @@ def classification(trainDistance, testDistance, trainLabels, testLabels, kernelN
     # SVM
     clf = SVC(kernel="precomputed")
     clf.fit(trainGramMatrix, trainLabels)
+
+
+    decisionValues = clf.decision_function(testGramMatrix)
+
+
     SVMResults = clf.predict(testGramMatrix)
     correct = sum(1.0 * (SVMResults == testLabels))
     accuracy = correct / len(testLabels)
-    # print kernelName+ ": " +str(accuracy)+ " (" +str(int(correct))+ "/" +str(len(testLabels))+ ")"
-    print str(accuracy)
+    print kernelName+ ": " +str(accuracy)+ " (" +str(int(correct))+ "/" +str(len(testLabels))+ ")"
+    # print str(accuracy)
 
 
 if __name__ == "__main__":

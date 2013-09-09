@@ -29,7 +29,7 @@ def buildHistogramForVideo(pathToVideo, vocabulary):
 
         print completePath
 
-        frameFeatures = np.zeros(128).reshape(1, 128)
+        histogram = np.zeros(size)
         for line in lines[1:]:
             data = line.split(" ")
             feature = data[4:]
@@ -39,17 +39,10 @@ def buildHistogramForVideo(pathToVideo, vocabulary):
                 feature[i] = item
 
             feature = normalizeSIFT(feature)
-            frameFeatures = np.vstack((frameFeatures, feature))
-
-        frameFeatures = frameFeatures[1:]
-        # codes, distance = vq(frameFeatures, vocabulary)
-
-        histogram = np.zeros(size)
-        for singleFeature in frameFeatures:
-            codes = nearestNeighbours(singleFeature, vocabulary)
+            codes = nearestNeighbours(feature, vocabulary)
 
             for i in range(4):
-                histogram[codes[i]] += 1.0 / (2 ** i)
+                histogram[codes[i]] += 1.0 / (2**i)
 
         stackOfHistogram = np.vstack((stackOfHistogram, histogram.reshape(1,size)))
 
