@@ -19,7 +19,6 @@ if __name__ == "__main__":
             videoPath = labelPath +"/"+ video
             videoHistogram = util.loadObject(videoPath)
 
-
             # bxx
             binarizer = preprocessing.Binarizer()
             binaryHistogram = binarizer.transform(videoHistogram)
