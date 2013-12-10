@@ -46,3 +46,9 @@ To have a better understanding about this project, please check
 #### 4. Classify based on SVM
 
 * `testDriver.py`: employ SVM and K Fold for experiments
+
+#### 5. Generate confusion matrix easily
+
+* `confusionMatrix.py`: generate a figure version of confusion matrix
+
+![image](https://dl.dropboxusercontent.com/u/37572555/Github/Video%20Recognition/conf_matrix.png)
